@@ -21,12 +21,21 @@ def CLI():
         user_input=None
     return user_input
 
+def parser(user_input):
+    inputs_list=user_input.split()
+    for input in inputs_list:
+        if input is 'q':
+            return -1
+        
+        
+    
+
 def main():
     greetings()
     user_input = CLI()
     if(user_input==None):
         return
     
-
+    
 if __name__ == "__main__":
     main()

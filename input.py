@@ -10,3 +10,4 @@ def CLI():
             except KeyboardInterrupt:# Ctrl+C
                 user_input=None
             return user_input
+
