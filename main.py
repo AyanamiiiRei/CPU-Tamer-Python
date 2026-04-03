@@ -21,10 +21,12 @@ def CLI():
         user_input=None
     return user_input
 
-if __name__ == "__main__":
-    # 这是Python程序的入口点，相当于C的main()
+def main():
     greetings()
     user_input = CLI()
+    if(user_input==None):
+        return
     
-    # exit(exit_code)
-    
+
+if __name__ == "__main__":
+    main()
