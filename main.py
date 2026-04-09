@@ -60,7 +60,7 @@ def toggle_cpu_state(on_or_off: int,cpu_index: int):
             print(f"Set CPU {cpu_index} status to:",state)
             return 0
     except OSError as e:
-        print(f"toggle_cpu_state Error: {e}")
+        print(f"toggle_cpu_state cpu{cpu_index} Error: {e}")
         return 1
 
 def set_cpu(core_count: int , thread_count: int):
@@ -70,14 +70,14 @@ def set_cpu(core_count: int , thread_count: int):
     vice_threads=thread_count-core_count
     for i in range(1,CPU_Core_Count):
         if (i<core_count):
-            print(f"toggle_cpu_state(1,{i})")
+            # print(f"toggle_cpu_state(1,{i})")
             toggle_cpu_state(1,i)
         else:
             toggle_cpu_state(0,i)
             
     for i in range(CPU_Core_Count,CPU_Thread_count):
         if ((i-CPU_Core_Count)<vice_threads):
-            print(f"toggle_cpu_state(1,{i})")
+            # print(f"toggle_cpu_state(1,{i})")
             toggle_cpu_state(1,i)
         else:
             toggle_cpu_state(0,i)
@@ -108,7 +108,6 @@ def parser(user_input):
                 if (arg[1]=='c' and arg[3]=='t') and (arg[0].isdigit() and arg[2].isdigit()):
                     core_count = int (arg[0])
                     thread_count = int (arg[2])
-                    print("set1")
                     return set_cpu(core_count,thread_count)
                 else:
                     print("Illegal argument",arg,"for command set")
