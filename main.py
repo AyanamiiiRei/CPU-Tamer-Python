@@ -3,6 +3,8 @@ CPU-Tamer - Python版本
 Author: Your Name
 """
 # import String 
+CPU_Core_Count=4
+CPU_Thread_count=8
 
 def main():
     """主函数 - 相当于C的int main()"""
@@ -36,9 +38,53 @@ def SMT(on_or_off: int):
     except OSError as e:
         print(f"Error: {e}")
 
+def cpu_state_checker(core_count:int, thread_count: int):
+    if core_count>0 and core_count <=CPU_Core_Count:
+        if thread_count>=core_count:
+            if thread_count<=CPU_Thread_count:
+                return True
+    return False
+
+def toggle_cpu_state(on_or_off: int,cpu_index: int):
+    if not (cpu_index>0 and cpu_index<=CPU_Thread_count):
+        return 0
+    path=f"/sys/devices/system/cpu/cpu{cpu_index}/online"
+    if on_or_off:
+        state=1
+    else:
+        state=0
+    # 错误处理用 try/except
+    try:
+        with open(path, 'w') as f:
+            f.write(str(state))
+            print(f"Set CPU {cpu_index} status to:",state)
+            return 0
+    except OSError as e:
+        print(f"toggle_cpu_state Error: {e}")
+        return 1
+
 def set_cpu(core_count: int , thread_count: int):
+    if not cpu_state_checker(core_count,thread_count):
+        print("Illegal cores and threads parameter:",core_count,thread_count)
+        return 1
     vice_threads=thread_count-core_count
-    
+    for i in range(1,CPU_Core_Count):
+        if (i<core_count):
+            print(f"toggle_cpu_state(1,{i})")
+            toggle_cpu_state(1,i)
+        else:
+            toggle_cpu_state(0,i)
+            
+    for i in range(CPU_Core_Count,CPU_Thread_count):
+        if ((i-CPU_Core_Count)<vice_threads):
+            print(f"toggle_cpu_state(1,{i})")
+            toggle_cpu_state(1,i)
+        else:
+            toggle_cpu_state(0,i)
+
+    return 0
+
+
 
 def parser(user_input):
     inputs_list=user_input.strip().split()
@@ -62,8 +108,8 @@ def parser(user_input):
                 if (arg[1]=='c' and arg[3]=='t') and (arg[0].isdigit() and arg[2].isdigit()):
                     core_count = int (arg[0])
                     thread_count = int (arg[2])
-                    #implement
-                    return 0
+                    print("set1")
+                    return set_cpu(core_count,thread_count)
                 else:
                     print("Illegal argument",arg,"for command set")
         case 'smt':       
